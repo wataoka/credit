@@ -1,4 +1,3 @@
-require(ranger)
 require(dplyr)
 require(data.table)
 require(randomForest)
@@ -17,15 +16,15 @@ train_table <- data_table[num_train]
 test_table <- data_table[-num_train]
 
 # train
-ranger_model <- ranger(
-  formula = as.factor(default_payment_next_month) ~ ., # default.payment.next.monthが目的変数になる
-  data = train_table,
-  num.trees = 1000,
-  mtry = 5,
-  write.forest = TRUE,
-  importance = 'impurity',
-  probability = TRUE
-)
+train_table %>%
+    randomForest(
+      formula = default_payment_next_month ~ .,
+      data = .,
+      mtry=2
+    ) -> d.rf
+
+print(d.rf)
+q()
 
 # evaluate  
 preds = predict(ranger_model, data=test_table)

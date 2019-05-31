@@ -1,4 +1,4 @@
-DATA_PATH = "./../data/data.csv"
+DATA_PATH = "./../../data/data.csv"
 
 get_data_table <- function() {
     data_table <- fread(DATA_PATH)
@@ -8,6 +8,8 @@ get_data_table <- function() {
     data_table[, MARRIAGE:=as.factor(MARRIAGE)]
     
     names(data_table)[24] <- "default_payment_next_month"
+
+    data_table[, default_payment_next_month:=as.factor(default_payment_next_month)]
 
     return(data_table)
 }
