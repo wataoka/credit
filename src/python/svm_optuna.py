@@ -10,13 +10,14 @@ data_path = "./../../data/data.csv"
 
 def objective(trial):
     svm_c = trial.suggest_loguniform('svr_c', 1e0, 1e2)
-    gamma = trial.suggest_loguniform('gamma', 2e-1, 1e1)
+    gamma = trial.suggest_loguniform('gamma', 1e-1, 1e1)
     svm = SVR(kernel='rbf', C=svm_c, gamma=gamma)
     svm.fit(x_train, y_train)
 
     y_pred = svm.predict(x_test)
+    y_pred = [int(i > 0.5) for i in y_pred]
 
-    cm = confusion_matrix(y_test, y_pred.round())
+    cm = confusion_matrix(y_test, y_pred)
 
     if 0 in cm:
         print()
@@ -24,13 +25,13 @@ def objective(trial):
         print()
         return 1.0
 
-
-    precision = cm[0][0]/(cm[0][0]+cm[1][0])
-    recall = cm[0][0]/(cm[0][0]+cm[0][1])
+    precision = cm[1][1]/(cm[1][1]+cm[0][1])
+    recall = cm[1][1]/(cm[1][1]+cm[1][0])
     f = (2*precision*recall)/(precision+recall)
 
     print()
-    print("confusion matrix: {}".format(cm))
+    print("confusion matrix:")
+    print(cm)
     print("precision: {}".format(precision))
     print("recall: {}".format(recall))
     print("f-measure: {}".format(f))
@@ -53,7 +54,7 @@ x = data[data.columns[data.columns!='default payment next month']]
 x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.15)
 
 study = optuna.create_study()
-study.optimize(objective, n_trials=100)
+study.optimize(objective, n_trials=1000)
 print(study.best_params)
 print(study.best_value)
 print(study.best_trial)

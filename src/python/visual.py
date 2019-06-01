@@ -13,5 +13,11 @@ def plot_mosaic_education():
     mosaic(data.sort_values('EDUCATION'), ['EDUCATION', 'default payment next month'])
     plt.show()
 
+def print_target_balance():
+    data = pd.read_csv(data_path)
+    target = data['default payment next month']
+    balance = target.value_counts()
+    print(balance)
+
 if __name__ == "__main__":
-    plot_mosaic_education()
+    print_target_balance()
